@@ -62,7 +62,8 @@ defmodule ExConstructor do
               atoms: true,
               camelcase: true,
               uppercamelcase: true,
-              underscore: true
+              underscore: true,
+              minus: true
   end
 
 
@@ -151,12 +152,13 @@ defmodule ExConstructor do
       _ -> raise "first argument must be a struct"
     end
     Enum.reduce keys, struct, fn (atom, acc) ->
-      str = String.replace(to_string(atom), "-", "_")
+      str = to_string(atom)
       under_str = Macro.underscore(str)
       up_camel_str = Macro.camelize(str)
       camel_str = lcfirst(up_camel_str)
       under_atom = String.to_atom(under_str)
       camel_atom = String.to_atom(camel_str)
+      minus_str = String.replace(under_str, "_", "-")
       value = cond do
         Map.has_key?(map, str) and opts.strings ->
           Map.get(map, str)
@@ -168,6 +170,8 @@ defmodule ExConstructor do
           Map.get(map, under_atom)
         Map.has_key?(map, up_camel_str) and opts.strings and opts.uppercamelcase ->
           Map.get(map, up_camel_str)
+        Map.has_key?(map, minus_str) and opts.strings and opts.minus ->
+          Map.get(map, minus_str)
         Map.has_key?(map, camel_str) and opts.strings and opts.camelcase ->
           Map.get(map, camel_str)
         Map.has_key?(map, camel_atom) and opts.atoms and opts.camelcase ->
