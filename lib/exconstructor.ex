@@ -151,7 +151,7 @@ defmodule ExConstructor do
       _ -> raise "first argument must be a struct"
     end
     Enum.reduce keys, struct, fn (atom, acc) ->
-      str = to_string(atom)
+      str = String.replace(to_string(atom), "-", "_")
       under_str = Macro.underscore(str)
       up_camel_str = Macro.camelize(str)
       camel_str = lcfirst(up_camel_str)
